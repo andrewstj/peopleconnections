@@ -52,7 +52,7 @@ public class PersonConnectionsRepository {
     PersonConnections connection = this.connectionsById.get(id);
     if (connection == null) {
       return Optional.empty();
-    } else if (depth.isEmpty() || depth.get() <= 1) {
+    } else if (!depth.isPresent() || depth.get() <= 1) {
       return Optional.of(personRepository.getPeopleFromIds(connection.getConnections()));
     } else {
       return Optional.of(findConnectionsByDepth(id, depth.get()));
@@ -81,7 +81,7 @@ public class PersonConnectionsRepository {
 
     Optional<Collection<Person>> firstPersonConnections = getConnectionsToPerson(firstPerson, depth);
     Optional<Collection<Person>> secondPersonConnections = getConnectionsToPerson(secondPerson, depth);
-    if (firstPersonConnections.isEmpty() || secondPersonConnections.isEmpty()) {
+    if (!firstPersonConnections.isPresent() || !secondPersonConnections.isPresent()) {
       return Optional.empty();
     }
     firstPersonConnections.get().retainAll(secondPersonConnections.get());
