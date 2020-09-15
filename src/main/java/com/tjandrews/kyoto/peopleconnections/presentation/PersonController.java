@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.tjandrews.kyoto.peopleconnections.business.PersonConnectionsRepository;
 import com.tjandrews.kyoto.peopleconnections.business.PersonRepository;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.Person;
+import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PersonConnectionPath;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,6 +56,15 @@ public class PersonController {
   @RequestParam(required=true) Integer secondPerson,
   @RequestParam(required=false) Integer degree) {
     return personConnectionsRepository.getCommonConnections(firstPerson, secondPerson, Optional.ofNullable(degree))
+      .orElseThrow(() -> new PersonNotFoundException());
+  }
+
+  @GetMapping("/connections/_queryConnectionPaths")
+  Collection<PersonConnectionPath> queryConnectionPaths(
+  @RequestParam(required=true) Integer firstPerson,
+  @RequestParam(required=true) Integer secondPerson,
+  @RequestParam(required=false) Integer degree) {
+    return personConnectionsRepository.getPathsConnectingPeople(firstPerson, secondPerson, Optional.ofNullable(degree))
       .orElseThrow(() -> new PersonNotFoundException());
   }
   

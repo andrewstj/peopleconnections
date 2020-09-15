@@ -1,8 +1,10 @@
 package com.tjandrews.kyoto.peopleconnections.business;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -11,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import com.tjandrews.kyoto.peopleconnections.infrastructure.PersonConnectionsDao;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.Person;
+import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PersonConnectionPath;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PersonConnections;
 
 import org.slf4j.Logger;
@@ -69,6 +72,34 @@ public class PersonConnectionsRepository {
     currentConnections.addAll(currentPersonConnections);
     currentPersonConnections
         .forEach(connectionPersonId -> findConnectionsByDepth(currentConnections, connectionPersonId, depth - 1));
+  }
+
+  public Optional<Collection<PersonConnectionPath>> getPathsConnectingPeople(Integer firstPersonId, Integer targetPersonId, Optional<Integer> depth) {
+    if (connectionsById.get(firstPersonId) == null || connectionsById.get(targetPersonId) == null) {
+      return Optional.empty();
+    }
+    Integer depthRemaining = depth.orElse(1) + 1;
+    List<PersonConnectionPath> connectionPaths = new ArrayList<PersonConnectionPath>();
+    getAllPaths(firstPersonId, targetPersonId, new ArrayList<Integer>(), connectionPaths, depthRemaining);
+    return Optional.of(connectionPaths);
+  }
+
+  private void getAllPaths(Integer currentPerson, Integer targetPerson, List<Integer> localPath, List<PersonConnectionPath> existingPaths, Integer depthRemaining) {
+    if (depthRemaining == 0 || localPath.contains(currentPerson)) {
+      return;
+    }
+    localPath.add(currentPerson);
+    Set<Integer> currentConnections = connectionsById.get(currentPerson).getConnections();
+    if (currentConnections.contains(targetPerson)) { 
+      localPath.add(targetPerson);
+      existingPaths.add(new PersonConnectionPath(localPath));
+      return;
+    } 
+    for (Integer id : currentConnections) {
+      List<Integer> nextPath = new ArrayList<Integer>(localPath);
+      getAllPaths(id, targetPerson, nextPath, existingPaths, depthRemaining - 1);
+    }
+    
   }
 
   public Optional<Collection<Person>> getCommonConnections(Integer firstPerson, Integer secondPerson,
