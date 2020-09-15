@@ -9,9 +9,9 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import com.tjandrews.kyoto.peopleconnections.infrastructure.Person;
-import com.tjandrews.kyoto.peopleconnections.infrastructure.PersonConnections;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.PersonConnectionsDao;
+import com.tjandrews.kyoto.peopleconnections.infrastructure.models.Person;
+import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PersonConnections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,6 @@ public class PersonConnectionsRepository {
   @PostConstruct
   public void initializeData() {
     connectionsById = personConnectionsDao.getPersonConnections();
-    LOGGER.info("Initialized connections " + connectionsById.size());
   }
 
   public Optional<Integer> getNumberOfConnectionsToPerson(Integer id, Optional<Integer> depth) {

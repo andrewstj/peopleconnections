@@ -1,7 +1,7 @@
 package com.tjandrews.kyoto.peopleconnections;
 
 import com.fasterxml.classmate.TypeResolver;
-import com.tjandrews.kyoto.peopleconnections.infrastructure.Person;
+import com.tjandrews.kyoto.peopleconnections.infrastructure.models.Person;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

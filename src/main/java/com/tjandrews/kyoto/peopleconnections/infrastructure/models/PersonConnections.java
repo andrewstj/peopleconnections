@@ -1,4 +1,4 @@
-package com.tjandrews.kyoto.peopleconnections.infrastructure;
+package com.tjandrews.kyoto.peopleconnections.infrastructure.models;
 
 import java.util.HashSet;
 import java.util.Set;

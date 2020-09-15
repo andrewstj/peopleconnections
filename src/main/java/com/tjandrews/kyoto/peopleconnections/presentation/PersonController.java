@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.tjandrews.kyoto.peopleconnections.business.PersonConnectionsRepository;
 import com.tjandrews.kyoto.peopleconnections.business.PersonRepository;
-import com.tjandrews.kyoto.peopleconnections.infrastructure.Person;
+import com.tjandrews.kyoto.peopleconnections.infrastructure.models.Person;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

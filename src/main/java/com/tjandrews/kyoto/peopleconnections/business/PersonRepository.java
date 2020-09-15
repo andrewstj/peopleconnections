@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.tjandrews.kyoto.peopleconnections.infrastructure.Person;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.PersonDao;
+import com.tjandrews.kyoto.peopleconnections.infrastructure.models.Person;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

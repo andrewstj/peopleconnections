@@ -1,4 +1,4 @@
-package com.tjandrews.kyoto.peopleconnections.infrastructure;
+package com.tjandrews.kyoto.peopleconnections.infrastructure.models;
 
 public class Person {
     private Integer id;
