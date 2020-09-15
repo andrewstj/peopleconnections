@@ -1,7 +1,7 @@
 package com.tjandrews.kyoto.peopleconnections.infrastructure;
 
-import java.util.Collection;
+import java.util.Map;
 
 public interface PersonConnectionsDao {
-  public Collection<PersonConnections> getPersonConnections();
+  public Map<Integer, PersonConnections> getPersonConnections();
 }

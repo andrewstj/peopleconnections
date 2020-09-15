@@ -3,7 +3,6 @@ package com.tjandrews.kyoto.peopleconnections.business;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -37,10 +36,7 @@ public class PersonConnectionsRepository {
 
   @PostConstruct
   public void initializeData() {
-    Collection<PersonConnections> peopleConnections = personConnectionsDao.getPersonConnections();
-    for (PersonConnections connection : peopleConnections) {
-      connectionsById.put(connection.getId(), connection);
-    }
+    connectionsById = personConnectionsDao.getPersonConnections();
     LOGGER.info("Initialized connections " + connectionsById.size());
   }
 
@@ -70,7 +66,7 @@ public class PersonConnectionsRepository {
     if (depth == 0) {
       return;
     }
-    List<Integer> currentPersonConnections = connectionsById.get(personId).getConnections();
+    Set<Integer> currentPersonConnections = connectionsById.get(personId).getConnections();
     currentConnections.addAll(currentPersonConnections);
     currentPersonConnections
         .forEach(connectionPersonId -> findConnectionsByDepth(currentConnections, connectionPersonId, depth - 1));

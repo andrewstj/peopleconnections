@@ -1,11 +1,11 @@
 package com.tjandrews.kyoto.peopleconnections.infrastructure;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PersonConnections {
     private Integer id;
-    private List<Integer> connections = new ArrayList<Integer>();
+    private Set<Integer> connections = new HashSet<Integer>();
 
 
     public Integer getId() {
@@ -16,11 +16,11 @@ public class PersonConnections {
         this.id = id;
     }
 
-    public List<Integer> getConnections() {
+    public Set<Integer> getConnections() {
         return connections;
     }
 
-    public void setConnections(final List<Integer> connections) {
+    public void setConnections(final Set<Integer> connections) {
         this.connections = connections;
     }
 
