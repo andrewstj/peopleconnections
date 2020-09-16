@@ -69,9 +69,10 @@ public class PersonConnectionsRepositoryTest {
   }
 
   @Test
-  public void getPathsConnectingPeople_depthThree_returnsSevenPaths() {
+  public void getPathsConnectingPeople_depthThree_returnsEightPaths() {
     // arrange
     Collection<PersonConnectionPath> expected = new ArrayList<PersonConnectionPath>();
+    expected.add(new PersonConnectionPath(Arrays.asList(1, 2, 3, 5, 6)));
     expected.add(new PersonConnectionPath(Arrays.asList(1, 2, 6)));
     expected.add(new PersonConnectionPath(Arrays.asList(1, 3, 2, 6)));
     expected.add(new PersonConnectionPath(Arrays.asList(1, 3, 4, 5, 6)));
@@ -88,11 +89,11 @@ public class PersonConnectionsRepositoryTest {
   }
 
   @Test
-  public void getPathsConnectingPeople_depthTwoReverse_returnsThreePaths() {
+  public void getPathsConnectingPeople_depthTwoReverse_returnsFourPaths() {
     // arrange
     Collection<PersonConnectionPath> expected = new ArrayList<PersonConnectionPath>();
     expected.add(new PersonConnectionPath(Arrays.asList(6, 2, 1)));
-    // 6, 2, 3, 1 isn't present because it's a longer path from 2.
+    expected.add(new PersonConnectionPath(Arrays.asList(6, 2, 3, 1)));
     expected.add(new PersonConnectionPath(Arrays.asList(6, 5, 3, 1)));
     expected.add(new PersonConnectionPath(Arrays.asList(6, 5, 4, 1)));
     

@@ -82,16 +82,16 @@ public class PersonConnectionsRepository {
   }
 
   private void getAllPaths(Integer currentPerson, Integer targetPerson, List<Integer> localPath, List<PersonConnectionPath> existingPaths, Integer depthRemaining) {
+    if (currentPerson == targetPerson) {
+      localPath.add(targetPerson);
+      existingPaths.add(new PersonConnectionPath(localPath));
+      return;
+    }
     if (depthRemaining == 0 || localPath.contains(currentPerson)) {
       return;
     }
     localPath.add(currentPerson);
     Set<Integer> currentConnections = peopleNetworkGraph.getConnectionsForId(currentPerson).getConnections();
-    if (currentConnections.contains(targetPerson)) { 
-      localPath.add(targetPerson);
-      existingPaths.add(new PersonConnectionPath(localPath));
-      return;
-    } 
     for (Integer id : currentConnections) {
         List<Integer> nextPath = new ArrayList<Integer>(localPath);
         getAllPaths(id, targetPerson, nextPath, existingPaths, depthRemaining - 1);
