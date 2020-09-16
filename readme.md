@@ -14,6 +14,7 @@ After starting the application, you can see the swagger API's at:
 
 http://localhost:8080/swagger-ui.html#/
 
+![alt](swagger.png)
 
 # Testing
 
