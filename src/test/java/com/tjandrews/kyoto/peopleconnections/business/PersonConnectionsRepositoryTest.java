@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
+import com.tjandrews.kyoto.peopleconnections.business.models.PersonConnectionPath;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.PeopleNetworkGraphDao;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PeopleNetworkGraph;
-import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PersonConnectionPath;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

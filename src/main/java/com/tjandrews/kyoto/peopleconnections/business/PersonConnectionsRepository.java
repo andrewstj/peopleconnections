@@ -9,10 +9,10 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import com.tjandrews.kyoto.peopleconnections.business.models.PersonConnectionPath;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.PeopleNetworkGraphDao;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PeopleNetworkGraph;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.Person;
-import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PersonConnectionPath;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PersonConnections;
 
 import org.slf4j.Logger;

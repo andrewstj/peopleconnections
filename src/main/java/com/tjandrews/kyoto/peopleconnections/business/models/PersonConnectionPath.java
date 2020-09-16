@@ -1,4 +1,4 @@
-package com.tjandrews.kyoto.peopleconnections.infrastructure.models;
+package com.tjandrews.kyoto.peopleconnections.business.models;
 
 import java.util.Arrays;
 import java.util.List;
