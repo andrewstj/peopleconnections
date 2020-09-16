@@ -2,16 +2,15 @@ package com.tjandrews.kyoto.peopleconnections.business;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import com.tjandrews.kyoto.peopleconnections.infrastructure.PersonConnectionsDao;
+import com.tjandrews.kyoto.peopleconnections.infrastructure.PeopleNetworkGraphDao;
+import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PeopleNetworkGraph;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.Person;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PersonConnectionPath;
 import com.tjandrews.kyoto.peopleconnections.infrastructure.models.PersonConnections;
@@ -21,25 +20,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-// TODO: Add tests.
-
 @Component
 public class PersonConnectionsRepository {
   final Logger LOGGER = LoggerFactory.getLogger(getClass());
-  private final PersonConnectionsDao personConnectionsDao;
+  private final PeopleNetworkGraphDao personConnectionsDao;
   private final PersonRepository personRepository;
 
-  private Map<Integer, PersonConnections> connectionsById = new HashMap<Integer, PersonConnections>();
+  private PeopleNetworkGraph peopleNetworkGraph;
 
   @Autowired
-  public PersonConnectionsRepository(PersonConnectionsDao personConnectionsDao, PersonRepository personRepository) {
+  public PersonConnectionsRepository(PeopleNetworkGraphDao personConnectionsDao, PersonRepository personRepository) {
     this.personConnectionsDao = personConnectionsDao;
     this.personRepository = personRepository;
   }
 
   @PostConstruct
   public void initializeData() {
-    connectionsById = personConnectionsDao.getPersonConnections();
+    peopleNetworkGraph = personConnectionsDao.getPeopleNetworkGraph();
   }
 
   public Optional<Integer> getNumberOfConnectionsToPerson(Integer id, Optional<Integer> depth) {
@@ -47,7 +44,7 @@ public class PersonConnectionsRepository {
   }
 
   public Optional<Collection<Person>> getConnectionsToPerson(Integer id, Optional<Integer> depth) {
-    PersonConnections connection = this.connectionsById.get(id);
+    PersonConnections connection = this.peopleNetworkGraph.getConnectionsForId(id);
     if (connection == null) {
       return Optional.empty();
     } else if (!depth.isPresent() || depth.get() <= 1) {
@@ -68,14 +65,14 @@ public class PersonConnectionsRepository {
     if (depth == 0) {
       return;
     }
-    Set<Integer> currentPersonConnections = connectionsById.get(personId).getConnections();
+    Set<Integer> currentPersonConnections = peopleNetworkGraph.getConnectionsForId(personId).getConnections();
     currentConnections.addAll(currentPersonConnections);
     currentPersonConnections
         .forEach(connectionPersonId -> findConnectionsByDepth(currentConnections, connectionPersonId, depth - 1));
   }
 
   public Optional<Collection<PersonConnectionPath>> getPathsConnectingPeople(Integer firstPersonId, Integer targetPersonId, Optional<Integer> depth) {
-    if (connectionsById.get(firstPersonId) == null || connectionsById.get(targetPersonId) == null) {
+    if (peopleNetworkGraph.getConnectionsForId(firstPersonId) == null || peopleNetworkGraph.getConnectionsForId(targetPersonId) == null) {
       return Optional.empty();
     }
     Integer depthRemaining = depth.orElse(1) + 1;
@@ -89,17 +86,16 @@ public class PersonConnectionsRepository {
       return;
     }
     localPath.add(currentPerson);
-    Set<Integer> currentConnections = connectionsById.get(currentPerson).getConnections();
+    Set<Integer> currentConnections = peopleNetworkGraph.getConnectionsForId(currentPerson).getConnections();
     if (currentConnections.contains(targetPerson)) { 
       localPath.add(targetPerson);
       existingPaths.add(new PersonConnectionPath(localPath));
       return;
     } 
     for (Integer id : currentConnections) {
-      List<Integer> nextPath = new ArrayList<Integer>(localPath);
-      getAllPaths(id, targetPerson, nextPath, existingPaths, depthRemaining - 1);
+        List<Integer> nextPath = new ArrayList<Integer>(localPath);
+        getAllPaths(id, targetPerson, nextPath, existingPaths, depthRemaining - 1);
     }
-    
   }
 
   public Optional<Collection<Person>> getCommonConnections(Integer firstPerson, Integer secondPerson,
@@ -117,7 +113,7 @@ public class PersonConnectionsRepository {
   public Person getLeastConnections(Optional<Integer> depth) {
     int leastConnection = Integer.MAX_VALUE;
     int personWithLeast = 0;
-    for (int id : connectionsById.keySet()) {
+    for (int id : peopleNetworkGraph.getPeopleIds()) {
       int numberOfConnections = getNumberOfConnectionsToPerson(id, depth).get();
       if (numberOfConnections < leastConnection) {
         leastConnection = numberOfConnections;
@@ -131,7 +127,7 @@ public class PersonConnectionsRepository {
   public Person getMostConnections(Optional<Integer> depth) {
     int mostConnection = 0;
     int personWithMost = 0;
-    for (int id : connectionsById.keySet()) {
+    for (int id : peopleNetworkGraph.getPeopleIds()) {
       int numberOfConnections = getNumberOfConnectionsToPerson(id, depth).get();
       if (numberOfConnections > mostConnection) {
         mostConnection = numberOfConnections;
