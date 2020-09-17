@@ -55,24 +55,31 @@ public class PersonConnectionsRepository {
   }
 
   private Collection<Person> findConnectionsByDepth(Integer personId, Integer depth) {
-    Set<Integer> currentConnections = new HashSet<Integer>();
-    findConnectionsByDepth(currentConnections, personId, depth);
-    currentConnections.remove(personId);
-    return personRepository.getPeopleFromIds(currentConnections);
+    Set<Integer> allConnections = new HashSet<Integer>();
+    findConnectionsByDepth(allConnections, new HashSet<Integer>(), personId, depth);
+    allConnections.remove(personId);
+    return personRepository.getPeopleFromIds(allConnections);
   }
 
-  private void findConnectionsByDepth(Set<Integer> currentConnections, Integer personId, Integer depth) {
+  private void findConnectionsByDepth(Set<Integer> allConnections, Set<Integer> visitedConnections, Integer personId,
+      Integer depth) {
     if (depth == 0) {
       return;
     }
-    Set<Integer> currentPersonConnections = peopleNetworkGraph.getConnectionsForId(personId).getConnections();
-    currentConnections.addAll(currentPersonConnections);
-    currentPersonConnections
-        .forEach(connectionPersonId -> findConnectionsByDepth(currentConnections, connectionPersonId, depth - 1));
+    visitedConnections.add(personId);
+    Set<Integer> newConnections = peopleNetworkGraph.getConnectionsForId(personId).getConnections();
+    allConnections.addAll(newConnections);
+    newConnections.forEach(newConnection -> {
+      if (!visitedConnections.contains(newConnection)) {
+        findConnectionsByDepth(allConnections, visitedConnections, newConnection, depth - 1);
+      }
+    });
   }
 
-  public Optional<Collection<PersonConnectionPath>> getPathsConnectingPeople(Integer firstPersonId, Integer targetPersonId, Optional<Integer> depth) {
-    if (peopleNetworkGraph.getConnectionsForId(firstPersonId) == null || peopleNetworkGraph.getConnectionsForId(targetPersonId) == null) {
+  public Optional<Collection<PersonConnectionPath>> getPathsConnectingPeople(Integer firstPersonId,
+      Integer targetPersonId, Optional<Integer> depth) {
+    if (peopleNetworkGraph.getConnectionsForId(firstPersonId) == null
+        || peopleNetworkGraph.getConnectionsForId(targetPersonId) == null) {
       return Optional.empty();
     }
     Integer depthRemaining = depth.orElse(1) + 1;
@@ -81,7 +88,8 @@ public class PersonConnectionsRepository {
     return Optional.of(connectionPaths);
   }
 
-  private void getAllPaths(Integer currentPerson, Integer targetPerson, List<Integer> localPath, List<PersonConnectionPath> existingPaths, Integer depthRemaining) {
+  private void getAllPaths(Integer currentPerson, Integer targetPerson, List<Integer> localPath,
+      List<PersonConnectionPath> existingPaths, Integer depthRemaining) {
     if (currentPerson == targetPerson) {
       localPath.add(targetPerson);
       existingPaths.add(new PersonConnectionPath(localPath));
@@ -93,8 +101,8 @@ public class PersonConnectionsRepository {
     localPath.add(currentPerson);
     Set<Integer> currentConnections = peopleNetworkGraph.getConnectionsForId(currentPerson).getConnections();
     for (Integer id : currentConnections) {
-        List<Integer> nextPath = new ArrayList<Integer>(localPath);
-        getAllPaths(id, targetPerson, nextPath, existingPaths, depthRemaining - 1);
+      List<Integer> nextPath = new ArrayList<Integer>(localPath);
+      getAllPaths(id, targetPerson, nextPath, existingPaths, depthRemaining - 1);
     }
   }
 
